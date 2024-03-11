@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import './App.css'
-import Wrapper from './components/Game'
+import Game from './components/Game'
 
 function App() {
   
 
   return (
-    <div>
-     <p> Hello World </p>
-     <Wrapper/>
+    <div className='app'>
+      <div className='app_header'> 
+        <h1>Blackjack</h1>
+     </div>
+     <Game/>
     </div>
   )
 }
