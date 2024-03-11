@@ -5,6 +5,17 @@
   text-align: center;
 }
 
+
+.game {
+  background: radial-gradient(circle at -1% 57.5%, rgb(19, 170, 82) 0%, rgb(0, 102, 43) 90%);
+  width: 80%;
+  height: 600px; 
+  margin: 0 auto; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .read-the-docs {
   color: #888;
 }
@@ -18,4 +29,46 @@
 .app_header {
   margin-bottom: 20px;
   text-align: center;
+}
+
+
+.game .card {
+  width: 90px; 
+  height: 120px; 
+  background-color: white;
+  border: 1px solid #000;
+  border-radius: 8px;
+  margin: 5px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.game .card .card-value {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.game .card .card-suit {
+  font-size: 16px;
+  margin: 5px;
+}
+
+.game .game_computer {
+  display: flex;
+  flex-direction: row;
+
+}
+
+.game .game_player {
+
+  margin: 100px 200px;
+  display: flex;
+  flex-direction: row;
+}
+
+.game .game_wrapper {
+  
 }
