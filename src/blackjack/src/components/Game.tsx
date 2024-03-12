@@ -37,7 +37,6 @@ const Game = () => {
           try {
               const response = await fetchDeckId();
               setDeck(response);
-              console.log(response)
               setCards(response.cards);
               setTimeout(() => shuffleDeckFunction(response.deck_id), 500);
             } catch (error) {
@@ -154,6 +153,7 @@ const Game = () => {
       suit={card.suit}
     />
   ));
+
 
   const resetGame = () => {
     setButtonClicked(false);
