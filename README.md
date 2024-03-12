@@ -4,7 +4,7 @@ Blackjack application for Orchestra Health
 
 ## Instructions
 
-Change into blackjack directory and install dependencies.
+Change into src directory and install dependencies.
 
 ```bash
 npm install
