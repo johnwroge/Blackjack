@@ -1,19 +1,37 @@
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   padding: 2rem;
   text-align: center;
+  background-color: #e5ebf2;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #e5ebf2;
+}
 
+.app_header {
+ font-size: 32px;
+ background-color: white;
+  padding: 1rem;
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.app_header h1 {
+  margin: 0;
+}
 .game {
   background: radial-gradient(circle at -1% 57.5%, rgb(19, 170, 82) 0%, rgb(0, 102, 43) 90%);
-  width: 80%;
+  width: 70%;
   height: 600px; 
   margin: 0 auto; 
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 
 .read-the-docs {
   color: #888;
@@ -62,12 +80,20 @@
 }
 
 .game .game_player {
-
   margin: 100px 200px;
   display: flex;
   flex-direction: row;
 }
 
+.game h2 {
+  color: whitesmoke;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  margin: 20px; 
+}
 
 button {
   padding: 10px 15px;
@@ -85,3 +111,26 @@ button:disabled {
   background-color: #ccc; 
   cursor: not-allowed;
 }
+
+
+.border {
+  position: relative;
+  width: 100%;
+  min-height: 100vh; 
+  background-color: ;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.winner-text {
+  color: gold;
+  margin: 0;
+  position: relative;
+  top: 20px; 
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+

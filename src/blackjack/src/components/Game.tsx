@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import{ useState, useEffect } from 'react'
 import fetchCard from '../hooks/fetchCard';
 import fetchDeckId from '../hooks/fetchDeckId';
 import shuffleDeck from '../hooks/shuffleDeck';
@@ -15,7 +15,6 @@ interface Card {
   value: string; 
 }
 
-
 const Game = () => {
     const [buttonClicked, setButtonClicked] = useState(false);
 
@@ -29,6 +28,7 @@ const Game = () => {
     const [computerScore, setComputerScore] = useState<number>(0);
 
     const [winner, setWinner] = useState('');
+    const [resetCount, setResetCount] = useState(0); 
 
 
     useEffect(() => {
@@ -37,6 +37,7 @@ const Game = () => {
           try {
               const response = await fetchDeckId();
               setDeck(response);
+              console.log(response)
               setCards(response.cards);
               setTimeout(() => shuffleDeckFunction(response.deck_id), 500);
             } catch (error) {
@@ -44,7 +45,7 @@ const Game = () => {
           }
       };
       fetchData();
-    }, []);
+    }, [resetCount]);
 
 
     const shuffleDeckFunction = async (deck_id: string | undefined) => {
@@ -61,7 +62,6 @@ const Game = () => {
   const dealCardsToPlayers = async () => {
     setComputerCards((prevCards) => [...prevCards, cards[0], cards[1]]);
     setPlayerCards((prevCards) => [...prevCards, cards[2], cards[3]]);
-  
     setComputerCards((prevCards) => {
       const newComputerScore = calculateScore(prevCards);
       setComputerScore(newComputerScore);
@@ -76,17 +76,14 @@ const Game = () => {
       }
       return prevCards;
     });
-  
     setButtonClicked(true);
   };
  
   const calculateScore = (cards: Card[]): number => {
     let score = 0;
     let hasAce = false;
-
     for (const card of cards) {
       const cardValue = card.value?.toUpperCase();
-  
       if (cardValue === 'ACE') {
         hasAce = true;
         score += 11;
@@ -96,12 +93,10 @@ const Game = () => {
         score += parseInt(cardValue, 10);
       }
     }
-  
     while (hasAce && score > 21) {
       score -= 10;
       hasAce = false;
     }
-
      return score;
   };
 
@@ -126,8 +121,15 @@ const Game = () => {
   };
 
   const findWinner = () => {
-    const winner = 21 - playerScore < 21 - computerScore ? 'You win' : 'Dealer wins';
-    setWinner(winner);
+    let winner: string;
+    if (playerScore === computerScore || ((playerScore < computerScore) && (playerScore < 21))){
+      winner = 'Dealer wins'
+      setWinner(winner);
+    }
+    if (playerScore < 21 && playerScore > computerScore){
+      winner = 'You win'
+      setWinner(winner);
+    } 
   }
   
 
@@ -153,37 +155,54 @@ const Game = () => {
     />
   ));
 
-  
+  const resetGame = () => {
+    setButtonClicked(false);
+    setWinner('');
+    setResetCount(prevCount => prevCount + 1);
+    setCards([]);
+    setComputerCards([]);
+    setPlayerCards([]);
+    setPlayerScore(0);
+    setComputerScore(0);
+    setDeck(null); 
+  };
+
+  const handleReplay = () => {
+    resetGame();
+  };
 
 
 
   return (
-    <> 
-      {winner && <h1> {winner}! </h1>}
-
-     <button onClick={dealCardsToPlayers} disabled={buttonClicked}> Start Game </button>
+    <div className='border'>
     <div className='game'>
-            <div className='game_wrapper'>
-
-            <div className='game_computer'>
-                <p> Computer </p>   
-                <h2>{computerScore}</h2>
-                {display_computer_cards}
-
-            </div>
-            <div className='game_player'>
-                <p>Player 1</p>
-                <h2>{playerScore}</h2>
-                {display_player_cards}
-            </div>
-
-            </div>
-
+   {!buttonClicked &&  <button onClick={dealCardsToPlayers} disabled={buttonClicked}>Start Game</button> }
+      <div className='game_wrapper'>
+      
+        <div className='game_computer'>
+         {buttonClicked && <h2> Dealer </h2>}
+          {display_computer_cards}
+          {!buttonClicked || <h2>{computerScore}</h2>}
+        </div>
+        
+        <div className='game_player'>
+          {!buttonClicked || <h2>{playerScore}</h2>}
+          {display_player_cards}
+        </div>
+       
+        <div className='winner-text'>{winner && <h1>{winner}!</h1>}</div>
+        
+      </div>
+     
     </div>
-            <button onClick={() => shuffleDeckFunction(deck?.deck_id)}>Shuffle Deck</button>
-            <button onClick={() => drawCard(deck?.deck_id)}>Hit</button>
-            <button onClick={() => findWinner()} >Stand</button>
-    </>
+    <div className='buttons'>
+      {buttonClicked && <button onClick={() => shuffleDeckFunction(deck?.deck_id)} disabled={winner.length > 0}>Shuffle Deck</button>}
+      {buttonClicked && <button onClick={() => drawCard(deck?.deck_id)} disabled={winner.length > 0}>Hit</button>}
+      {buttonClicked &&  <button onClick={() => findWinner()} disabled={winner.length > 0 && playerScore <= 21}>Stand</button>}
+      {winner && <button onClick={handleReplay}>Replay</button>}
+    </div>
+</div>
+
   )
 }
 
