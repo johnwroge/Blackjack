@@ -1,6 +1,5 @@
 #root {
   max-width: 1280px;
-  /* margin: 0 auto; */
   padding: 2rem;
   text-align: center;
 }
@@ -69,6 +68,20 @@
   flex-direction: row;
 }
 
-.game .game_wrapper {
-  
+
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #3498db; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  background-color: #ccc; 
+  cursor: not-allowed;
 }

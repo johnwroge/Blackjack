@@ -11,10 +11,16 @@ shuffled: boolean,
 success: boolean
 }
 
+interface Card {
+  value: string; 
+}
+
 
 const Game = () => {
+    const [buttonClicked, setButtonClicked] = useState(false);
+
     const [deck, setDeck] = useState<Deck | null>(null);
-    const [cards, setCards] = useState<any[]>([]);
+    const [cards, setCards] = useState<Card[]>([]);
 
     const [playerCards, setPlayerCards] = useState<any[]>([]);
     const [computerCards, setComputerCards] = useState<any[]>([]);
@@ -22,6 +28,7 @@ const Game = () => {
     const [playerScore, setPlayerScore] = useState<number>(0);
     const [computerScore, setComputerScore] = useState<number>(0);
 
+    const [winner, setWinner] = useState('');
 
 
     useEffect(() => {
@@ -44,39 +51,86 @@ const Game = () => {
       try {
           if (deck_id) {
               const response = await shuffleDeck(deck_id);
-            //   dealCardsToPlayers();
           }
       } catch (error) {
           console.error('Error shuffling deck:', error);
       }
   };
 
-  const dealCardsToPlayers = () => {
-    // Check if there are enough cards in the array
-    
-    if (Array.isArray(cards) && cards.length >= 4) {
-      for (let i = 0; i < 2; i++) {
-        setComputerCards(prevCards => [...prevCards, cards[i]]);
-        setPlayerCards(prevCards => [...prevCards, cards[i + 2]]);
+
+  const dealCardsToPlayers = async () => {
+    setComputerCards((prevCards) => [...prevCards, cards[0], cards[1]]);
+    setPlayerCards((prevCards) => [...prevCards, cards[2], cards[3]]);
+  
+    setComputerCards((prevCards) => {
+      const newComputerScore = calculateScore(prevCards);
+      setComputerScore(newComputerScore);
+      return prevCards;
+    });
+  
+    setPlayerCards((prevCards) => {
+      const newPlayerScore = calculateScore(prevCards);
+      setPlayerScore(newPlayerScore);
+      if (newPlayerScore > 21){
+        setWinner('Dealer wins')
       }
-      setPlayerScore(playerCards.reduce((accumulator, card) => accumulator + Number(card.value), 0));
-      setComputerScore(computerCards.reduce((accumulator, card) => accumulator + Number(card.value), 0));
-    } else {
-      console.error("Not enough cards to deal.");
-    }
+      return prevCards;
+    });
+  
+    setButtonClicked(true);
   };
  
+  const calculateScore = (cards: Card[]): number => {
+    let score = 0;
+    let hasAce = false;
+
+    for (const card of cards) {
+      const cardValue = card.value?.toUpperCase();
+  
+      if (cardValue === 'ACE') {
+        hasAce = true;
+        score += 11;
+      } else if (['KING', 'QUEEN', 'JACK'].includes(cardValue)) {
+        score += 10;
+      } else {
+        score += parseInt(cardValue, 10);
+      }
+    }
+  
+    while (hasAce && score > 21) {
+      score -= 10;
+      hasAce = false;
+    }
+
+     return score;
+  };
 
   const drawCard = async (deck_id: string | undefined) => {
     try {
-        if (deck_id) {
-            const response = await fetchCard(deck_id);
-            setPlayerCards(prevCards => [...prevCards, ...response.cards]);
-        }
+      if (deck_id) {
+        const response = await fetchCard(deck_id);
+          const newCards = Array.isArray(response.cards) ? response.cards : [];
+  
+        setPlayerCards((prevCards) => {
+          const newPlayerScore = calculateScore([...prevCards, ...newCards]);
+          setPlayerScore(newPlayerScore);
+          if (newPlayerScore > 21){
+            setWinner('Dealer wins')
+          }
+          return [...prevCards, ...newCards];
+        });
+      }
     } catch (error) {
-        console.error('Error shuffling deck:', error);
+      console.error('Error drawing card:', error);
     }
-};
+  };
+
+  const findWinner = () => {
+    const winner = 21 - playerScore < 21 - computerScore ? 'You win' : 'Dealer wins';
+    setWinner(winner);
+  }
+  
+
 
   const display_player_cards = playerCards.map((card, index) => (
     <Card
@@ -88,6 +142,7 @@ const Game = () => {
     />
   ));
 
+
   const display_computer_cards = computerCards.map((card, index) => (
     <Card
       key={index} 
@@ -98,34 +153,36 @@ const Game = () => {
     />
   ));
 
-
+  
 
 
 
   return (
     <> 
+      {winner && <h1> {winner}! </h1>}
+
+     <button onClick={dealCardsToPlayers} disabled={buttonClicked}> Start Game </button>
     <div className='game'>
             <div className='game_wrapper'>
 
             <div className='game_computer'>
-                <p> computer cards</p>   
+                <p> Computer </p>   
                 <h2>{computerScore}</h2>
                 {display_computer_cards}
 
             </div>
             <div className='game_player'>
-                <p>player cards</p>
+                <p>Player 1</p>
                 <h2>{playerScore}</h2>
                 {display_player_cards}
             </div>
 
             </div>
-            <button onClick={() => shuffleDeckFunction(deck?.deck_id)}>Shuffle Deck</button>
-            <button onClick={() => drawCard(deck?.deck_id)}>Draw Card</button>
-    </div>
 
-    <button onClick={dealCardsToPlayers}> Start Game </button>
-    
+    </div>
+            <button onClick={() => shuffleDeckFunction(deck?.deck_id)}>Shuffle Deck</button>
+            <button onClick={() => drawCard(deck?.deck_id)}>Hit</button>
+            <button onClick={() => findWinner()} >Stand</button>
     </>
   )
 }
