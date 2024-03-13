@@ -4,31 +4,25 @@ import fetchDeckId from '../hooks/fetchDeckId';
 import shuffleDeck from '../hooks/shuffleDeck';
 import Card from './Card';
 
-interface Deck {
-deck_id: any,
-remaining: number,
-shuffled: boolean,
-success: boolean
-}
+import { Deck, CardType } from '../types/types';
 
-interface Card {
-  value: string; 
-}
+
+
 
 const Game = () => {
-    const [buttonClicked, setButtonClicked] = useState(false);
+    const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
     const [deck, setDeck] = useState<Deck | null>(null);
-    const [cards, setCards] = useState<Card[]>([]);
+    const [cards, setCards] = useState<CardType[]>([]);
 
-    const [playerCards, setPlayerCards] = useState<any[]>([]);
-    const [computerCards, setComputerCards] = useState<any[]>([]);
+    const [playerCards, setPlayerCards] = useState<CardType[]>([]);
+    const [computerCards, setComputerCards] = useState<CardType[]>([]);
 
     const [playerScore, setPlayerScore] = useState<number>(0);
     const [computerScore, setComputerScore] = useState<number>(0);
 
-    const [winner, setWinner] = useState('');
-    const [resetCount, setResetCount] = useState(0); 
+    const [winner, setWinner] = useState<string>('');
+    const [resetCount, setResetCount] = useState<number>(0); 
 
 
     useEffect(() => {
