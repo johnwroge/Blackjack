@@ -7,6 +7,9 @@
   
   export interface CardType {
     value: string;
+    code: string;
+    image: string;
+    suit: string;
   }
 
   export interface CardProps {

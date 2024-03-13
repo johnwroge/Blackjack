@@ -73,7 +73,7 @@ const Game = () => {
     setButtonClicked(true);
   };
  
-  const calculateScore = (cards: Card[]): number => {
+  const calculateScore = (cards: CardType[]): number => {
     let score = 0;
     let hasAce = false;
     for (const card of cards) {
